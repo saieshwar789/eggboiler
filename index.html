@@ -13,11 +13,16 @@
 
     <style>
         /* --- General Styling --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --egg-color: #fffde7; /* A soft, creamy egg white color */
+            --yolk-color: #ffc107; /* Not used, but good for reference */
+            --pink-light: #fce4ec;
+            --pink-medium: #ff80ab;
+            --pink-dark: #c2185b;
+            --lavender-light: #e1bee7;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Comfortaa', sans-serif;
@@ -25,12 +30,12 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #fce4ec, #e1bee7);
+            background: linear-gradient(135deg, var(--pink-light), var(--lavender-light));
             color: #333;
             padding: 20px;
+            overflow: hidden;
         }
 
-        /* --- Main Container --- */
         .container {
             background: rgba(255, 255, 255, 0.9);
             padding: 40px;
@@ -39,13 +44,11 @@
             text-align: center;
             max-width: 400px;
             width: 100%;
-            transition: all 0.3s ease;
         }
 
-        /* --- Headings and Text --- */
         h1 {
             font-family: 'Dancing Script', cursive;
-            color: #c2185b;
+            color: var(--pink-dark);
             font-size: 2.8rem;
             margin-bottom: 10px;
         }
@@ -53,22 +56,115 @@
         .subtitle {
             font-size: 1rem;
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
-        /* --- Timer Display --- */
-        .timer {
-            font-size: 6rem;
+        /* --- NEW: Animation Container --- */
+        .animation-container {
+            position: relative;
+            height: 200px;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Base styles for the egg shape */
+        .egg {
+            width: 120px;
+            height: 160px;
+            background-color: var(--egg-color);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: absolute;
+        }
+
+        /* --- Loading Animation: Bobbing Egg --- */
+        #loadingAnimation { display: none; }
+        #loadingAnimation .egg {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: bobbing 2.5s ease-in-out infinite;
+        }
+
+        @keyframes bobbing {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
+
+        #timerDisplay {
+            font-size: 3rem; /* Smaller to fit inside the egg */
             font-weight: 700;
-            color: #ad1457;
-            margin: 20px 0;
-            line-height: 1;
+            color: var(--pink-dark);
         }
 
-        /* --- Control Button --- */
+        /* --- Hatching Animation --- */
+        #hatchingAnimation { display: none; }
+        
+        .egg-top {
+            width: 120px;
+            height: 80px; /* Top half */
+            background-color: var(--egg-color);
+            border-radius: 50% 50% 50% 50% / 100% 100% 0 0;
+            position: absolute;
+            top: 20px;
+            z-index: 10;
+            transform-origin: bottom center;
+        }
+
+        .egg-bottom {
+            width: 120px;
+            height: 80px; /* Bottom half */
+            background-color: var(--egg-color);
+            border-radius: 50% 50% 50% 50% / 0 0 100% 100%;
+            position: absolute;
+            top: 100px;
+            z-index: 5;
+        }
+
+        .heart {
+            font-size: 50px;
+            color: var(--pink-medium);
+            position: absolute;
+            z-index: 8;
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        /* Triggering the hatching sequence with a class */
+        .start-hatching .egg-top,
+        .start-hatching .egg-bottom {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .start-hatching .egg-top {
+            animation: shake 0.5s ease-in-out, crack-open 1s ease-out 0.5s forwards;
+        }
+        
+        .start-hatching .heart {
+            animation: show-heart 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1s forwards;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px) rotate(-2deg); }
+            75% { transform: translateX(5px) rotate(2deg); }
+        }
+
+        @keyframes crack-open {
+            to { transform: translateY(-30px) rotate(15deg); }
+        }
+        
+        @keyframes show-heart {
+            to { opacity: 1; transform: scale(1) translateY(-10px); }
+        }
+
+        /* --- Control Button and Messages --- */
         #controlButton {
             font-family: 'Comfortaa', sans-serif;
-            background-color: #ff80ab;
+            background-color: var(--pink-medium);
             color: white;
             border: none;
             border-radius: 30px;
@@ -78,23 +174,18 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(255, 128, 171, 0.5);
-            margin-bottom: 20px;
+            margin-top: 20px;
             width: 250px;
         }
         
-        /* Style for the "Stop Alarm" button state */
         #controlButton.alarm-active {
-            background-color: #c2185b; /* Deeper pink for alarm */
+            background-color: var(--pink-dark);
             box-shadow: 0 4px 15px rgba(194, 24, 91, 0.5);
         }
 
-        #controlButton:hover {
+        #controlButton:hover:not(:disabled) {
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(255, 128, 171, 0.7);
-        }
-        
-        #controlButton.alarm-active:hover {
-            box-shadow: 0 6px 20px rgba(194, 24, 91, 0.7);
         }
 
         #controlButton:disabled {
@@ -103,14 +194,9 @@
             box-shadow: none;
             transform: none;
         }
-        
-        #controlButton .fa-solid {
-            margin-right: 10px;
-        }
 
-        /* --- Info and Done Messages --- */
-        .info-text {
-            color: #880e4f;
+        .info-text, .done-message { /* Combined for brevity */
+            color: var(--pink-dark);
             font-size: 0.9rem;
             height: 20px;
             transition: opacity 0.5s ease;
@@ -118,11 +204,11 @@
 
         .done-message {
             display: none;
-            margin-top: 20px;
-            padding: 20px;
+            margin-top: 10px;
+            padding: 10px;
             background-color: #f8bbd0;
             border-radius: 15px;
-            border: 2px dashed #c2185b;
+            border: 2px dashed var(--pink-dark);
             animation: fadeIn 0.5s ease;
         }
         
@@ -130,37 +216,42 @@
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
         }
-
-        .done-message h2 {
-            font-family: 'Dancing Script', cursive;
-            color: #c2185b;
-            font-size: 2rem;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Audio elements now point to your local files -->
-    <!-- The `loop` attribute tells the browser these sounds should repeat -->
-    <audio id="alarmSound" src="alarm.wav" preload="auto" loop></audio>
+    <audio id="alarmSound" src="alarm.mp3" preload="auto" loop></audio>
     <audio id="boilingSound" src="boiling.mp3" preload="auto" loop></audio>
 
     <div class="container">
         <h1>For My Dearest</h1>
-        <p class="subtitle">A special timer for your perfect eggs <i class="fa-solid fa-heart" style="color:#ff80ab;"></i></p>
+        <p class="subtitle">A special timer for your perfect eggs</p>
+        
+        <div class="animation-container">
+            <!-- Loading Animation: Bobbing Egg -->
+            <div id="loadingAnimation">
+                <div class="egg">
+                    <div id="timerDisplay">12:00</div>
+                </div>
+            </div>
 
-        <div id="timerDisplay" class="timer">12:00</div>
+            <!-- Hatching Animation: Cracking Egg -->
+            <div id="hatchingAnimation">
+                <div class="egg-bottom"></div>
+                <div class="heart"><i class="fa-solid fa-heart"></i></div>
+                <div class="egg-top"></div>
+            </div>
+        </div>
+
+        <div id="doneMessage">
+            <h2>Time's Up, Sweetheart! 🍳</h2>
+        </div>
 
         <button id="controlButton">
             <i class="fa-solid fa-play"></i> Start Boiling
         </button>
 
         <p id="startTimeInfo" class="info-text"></p>
-
-        <div id="doneMessage" class="done-message">
-            <h2>Time's Up, Sweetheart! 🍳</h2>
-            <p>Your perfect eggs are ready!</p>
-        </div>
     </div>
 
     <script>
@@ -171,39 +262,38 @@
         const doneMessage = document.getElementById('doneMessage');
         const alarmSound = document.getElementById('alarmSound');
         const boilingSound = document.getElementById('boilingSound');
+        
+        // Animation Elements
+        const loadingAnimation = document.getElementById('loadingAnimation');
+        const hatchingAnimation = document.getElementById('hatchingAnimation');
 
         // --- Timer Configuration & State ---
-        const DURATION_IN_SECONDS = 0.2 * 60; // 12 minutes
+        const DURATION_IN_SECONDS = 12 * 60;
         let timerInterval;
         let timeLeft = DURATION_IN_SECONDS;
-        let isAlarmRinging = false; // State to track if the alarm is ringing
+        let isAlarmRinging = false;
 
-        /**
-         * Updates the timer display on the page.
-         */
         function updateTimerDisplay(seconds) {
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = seconds % 60;
             timerDisplay.textContent = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
         }
 
-        /**
-         * Starts the countdown timer.
-         */
         function startTimer() {
-            // Play boiling sound
             boilingSound.play();
+            
+            // Show loading animation
+            loadingAnimation.style.display = 'block';
 
             timeLeft = DURATION_IN_SECONDS;
             updateTimerDisplay(timeLeft);
             doneMessage.style.display = 'none';
-            controlButton.disabled = true; // Disable while boiling
+            controlButton.disabled = true;
             controlButton.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> Boiling...';
 
             const now = new Date();
             const startTimeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            startTimeInfo.textContent = `Boiling started at ${startTimeString}`;
-            startTimeInfo.style.opacity = '1';
+            startTimeInfo.textContent = `Started at ${startTimeString}`;
 
             timerInterval = setInterval(() => {
                 timeLeft--;
@@ -214,49 +304,45 @@
             }, 1000);
         }
 
-        /**
-         * Handles the completion of the timer.
-         */
         function finishTimer() {
             clearInterval(timerInterval);
             
-            // Stop boiling sound and reset it
             boilingSound.pause();
             boilingSound.currentTime = 0;
 
-            // Start playing the alarm on loop
+            // Hide loading, show and trigger hatching animation
+            loadingAnimation.style.display = 'none';
+            hatchingAnimation.style.display = 'block';
+            hatchingAnimation.classList.add('start-hatching');
+
             alarmSound.play();
             isAlarmRinging = true;
 
             doneMessage.style.display = 'block';
-            startTimeInfo.style.opacity = '0';
+            startTimeInfo.textContent = '';
             
-            // Enable and change the button to "Stop Alarm"
             controlButton.disabled = false;
             controlButton.innerHTML = '<i class="fa-solid fa-bell-slash"></i> Stop Alarm';
-            controlButton.classList.add('alarm-active'); // Add special style for alarm
+            controlButton.classList.add('alarm-active');
         }
         
-        /**
-         * Stops the alarm and resets the page to its initial state.
-         */
         function stopAlarmAndReset() {
-            // Stop the alarm sound and reset it
             alarmSound.pause();
             alarmSound.currentTime = 0;
             isAlarmRinging = false;
 
+            // Hide all animations and reset them
+            hatchingAnimation.style.display = 'none';
+            hatchingAnimation.classList.remove('start-hatching'); // Reset for next time
             doneMessage.style.display = 'none';
             
-            // Reset the button to its "Start" state
+            // Reset button and timer display
             updateTimerDisplay(DURATION_IN_SECONDS);
             controlButton.innerHTML = '<i class="fa-solid fa-play"></i> Start Again';
             controlButton.classList.remove('alarm-active');
         }
 
-        // --- Main Event Listener ---
         controlButton.addEventListener('click', () => {
-            // The button has two functions depending on the state
             if (isAlarmRinging) {
                 stopAlarmAndReset();
             } else {
@@ -265,6 +351,8 @@
         });
 
         // --- Initial State ---
+        // Initially show the loading animation container but with the timer text
+        loadingAnimation.style.display = 'block';
         updateTimerDisplay(DURATION_IN_SECONDS);
     </script>
 </body>
