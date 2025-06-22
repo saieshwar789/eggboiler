@@ -76,12 +76,12 @@ h1 {
     font-weight: 600;
 }
 
-/* --- Styling for the start time display --- */
+/* Styling for the start time display */
 .start-time-display {
     font-size: 0.9rem;
     color: #A1887F;
     margin-bottom: 2rem;
-    min-height: 1rem; /* Use min-height to allow growth */
+    min-height: 1rem; /* FIX: Use min-height to allow growth */
     font-weight: 300;
 }
 
