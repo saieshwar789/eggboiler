@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>An Eggcellent Timer </title>
+    <title>An Eggcellent Timer for My Love</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,8 +65,8 @@
             line-height: 1;
         }
 
-        /* --- Start Button --- */
-        #startButton {
+        /* --- Control Button --- */
+        #controlButton {
             font-family: 'Comfortaa', sans-serif;
             background-color: #ff80ab;
             color: white;
@@ -79,62 +79,47 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(255, 128, 171, 0.5);
             margin-bottom: 20px;
+            width: 250px;
+        }
+        
+        /* Style for the "Stop Alarm" button state */
+        #controlButton.alarm-active {
+            background-color: #c2185b; /* Deeper pink for alarm */
+            box-shadow: 0 4px 15px rgba(194, 24, 91, 0.5);
         }
 
-        #startButton:hover {
+        #controlButton:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(255, 128, 171, 0.7);
         }
+        
+        #controlButton.alarm-active:hover {
+            box-shadow: 0 6px 20px rgba(194, 24, 91, 0.7);
+        }
 
-        #startButton:disabled {
+        #controlButton:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
             box-shadow: none;
             transform: none;
         }
         
-        #startButton .fa-solid {
+        #controlButton .fa-solid {
             margin-right: 10px;
         }
 
-        /* --- Info Text --- */
+        /* --- Info and Done Messages --- */
         .info-text {
             color: #880e4f;
             font-size: 0.9rem;
             height: 20px;
             transition: opacity 0.5s ease;
         }
-        
-        /* --- Dancing Egg Styling (Now always on) --- */
-        .egg-wrapper {
-            height: 100px;
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
 
-        #egg {
-            width: 60px;
-            height: 80px;
-            background-color: #fff9c4;
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            display: block; /* <-- CHANGED from 'none' */
-            animation: dance 1.5s infinite ease-in-out; /* <-- MOVED animation here */
-        }
-        
-        @keyframes dance {
-            0%, 100% { transform: rotate(0deg) translateY(0); }
-            25% { transform: rotate(-15deg) translateY(-10px); }
-            75% { transform: rotate(15deg) translateY(-10px); }
-        }
-
-        /* --- Done Message Styling --- */
         .done-message {
-            display: none; /* Hidden by default */
-            margin-top: 10px;
-            padding: 15px;
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
             background-color: #f8bbd0;
             border-radius: 15px;
             border: 2px dashed #c2185b;
@@ -155,59 +140,65 @@
 </head>
 <body>
 
+    <!-- Audio elements now point to your local files -->
+    <!-- The `loop` attribute tells the browser these sounds should repeat -->
+    <audio id="alarmSound" src="alarm.wav" preload="auto" loop></audio>
+    <audio id="boilingSound" src="boiling.mp3" preload="auto" loop></audio>
+
     <div class="container">
-        <h1>Egg timer</h1>
+        <h1>For My Dearest</h1>
         <p class="subtitle">A special timer for your perfect eggs <i class="fa-solid fa-heart" style="color:#ff80ab;"></i></p>
 
         <div id="timerDisplay" class="timer">12:00</div>
 
-        <button id="startButton">
+        <button id="controlButton">
             <i class="fa-solid fa-play"></i> Start Boiling
         </button>
 
         <p id="startTimeInfo" class="info-text"></p>
-
-        <div class="egg-wrapper">
-            <div id="egg"></div>
-        </div>
 
         <div id="doneMessage" class="done-message">
             <h2>Time's Up, Sweetheart! 🍳</h2>
             <p>Your perfect eggs are ready!</p>
         </div>
     </div>
-    
-    <audio id="alarmSound" src="alarm.wav" preload="auto"></audio>
 
     <script>
         // --- Get HTML Elements ---
         const timerDisplay = document.getElementById('timerDisplay');
-        const startButton = document.getElementById('startButton');
+        const controlButton = document.getElementById('controlButton');
         const startTimeInfo = document.getElementById('startTimeInfo');
         const doneMessage = document.getElementById('doneMessage');
         const alarmSound = document.getElementById('alarmSound');
-        // The egg element is no longer needed in the script
+        const boilingSound = document.getElementById('boilingSound');
 
-        // --- Timer Configuration ---
-        const DURATION_IN_SECONDS = 0.5 * 60;
+        // --- Timer Configuration & State ---
+        const DURATION_IN_SECONDS = 12 * 60; // 12 minutes
         let timerInterval;
         let timeLeft = DURATION_IN_SECONDS;
-        
+        let isAlarmRinging = false; // State to track if the alarm is ringing
+
+        /**
+         * Updates the timer display on the page.
+         */
         function updateTimerDisplay(seconds) {
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = seconds % 60;
             timerDisplay.textContent = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
         }
 
+        /**
+         * Starts the countdown timer.
+         */
         function startTimer() {
-            clearInterval(timerInterval);
+            // Play boiling sound
+            boilingSound.play();
 
-            // Reset UI state
             timeLeft = DURATION_IN_SECONDS;
             updateTimerDisplay(timeLeft);
-            doneMessage.style.display = 'none'; // Hide the 'done' message
-            startButton.disabled = true;
-            startButton.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> Boiling...';
+            doneMessage.style.display = 'none';
+            controlButton.disabled = true; // Disable while boiling
+            controlButton.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> Boiling...';
 
             const now = new Date();
             const startTimeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -223,21 +214,55 @@
             }, 1000);
         }
 
+        /**
+         * Handles the completion of the timer.
+         */
         function finishTimer() {
             clearInterval(timerInterval);
+            
+            // Stop boiling sound and reset it
+            boilingSound.pause();
+            boilingSound.currentTime = 0;
+
+            // Start playing the alarm on loop
             alarmSound.play();
-            
-            // Show celebration message
+            isAlarmRinging = true;
+
             doneMessage.style.display = 'block';
-            
             startTimeInfo.style.opacity = '0';
             
-            startButton.disabled = false;
-            startButton.innerHTML = '<i class="fa-solid fa-play"></i> Start Again';
+            // Enable and change the button to "Stop Alarm"
+            controlButton.disabled = false;
+            controlButton.innerHTML = '<i class="fa-solid fa-bell-slash"></i> Stop Alarm';
+            controlButton.classList.add('alarm-active'); // Add special style for alarm
+        }
+        
+        /**
+         * Stops the alarm and resets the page to its initial state.
+         */
+        function stopAlarmAndReset() {
+            // Stop the alarm sound and reset it
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+            isAlarmRinging = false;
+
+            doneMessage.style.display = 'none';
+            
+            // Reset the button to its "Start" state
+            updateTimerDisplay(DURATION_IN_SECONDS);
+            controlButton.innerHTML = '<i class="fa-solid fa-play"></i> Start Again';
+            controlButton.classList.remove('alarm-active');
         }
 
-        // --- Event Listener ---
-        startButton.addEventListener('click', startTimer);
+        // --- Main Event Listener ---
+        controlButton.addEventListener('click', () => {
+            // The button has two functions depending on the state
+            if (isAlarmRinging) {
+                stopAlarmAndReset();
+            } else {
+                startTimer();
+            }
+        });
 
         // --- Initial State ---
         updateTimerDisplay(DURATION_IN_SECONDS);
