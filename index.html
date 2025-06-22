@@ -26,9 +26,7 @@
 
         body {
             font-family: 'Comfortaa', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
             background: linear-gradient(135deg, var(--pink-light), #e1bee7);
             padding: 20px;
@@ -36,28 +34,18 @@
         
         .container {
             background: rgba(255, 255, 255, 0.9);
-            padding: 30px;
-            border-radius: 25px;
+            padding: 30px; border-radius: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            position: relative;
+            text-align: center; max-width: 400px; width: 100%;
+            display: flex; flex-direction: column; gap: 15px; position: relative;
         }
 
         h1 { font-family: 'Dancing Script', cursive; color: var(--pink-dark); font-size: 2.8rem; margin: 0; }
         .subtitle { font-size: 1rem; color: #666; margin-top: -10px; }
 
         .animation-container {
-            position: relative;
-            min-height: 180px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: relative; min-height: 180px; width: 100%;
+            display: flex; justify-content: center; align-items: center;
             margin-bottom: 120px; /* The extra large gap */
         }
         
@@ -73,26 +61,36 @@
 
         #timerDisplay { font-size: 3rem; font-weight: 700; color: var(--pink-dark); position: relative; z-index: 10; }
 
-        /* --- LIQUID & BUBBLE ANIMATION --- */
+        /* --- CORRECTED LIQUID & WAVE ANIMATION --- */
         .liquid {
             position: absolute; bottom: 0; left: 0;
             width: 100%; height: var(--fill-level, 0%);
-            background-color: var(--liquid-color);
             transition: height 1s linear;
-            z-index: 1; overflow: hidden;
+            z-index: 1; overflow: hidden; /* Contains bubbles */
         }
         
-        /* NEW: Wave effect for the liquid surface */
+        /* The waving surface */
+        .liquid::before {
+            content: ''; position: absolute;
+            width: 250%; height: 50px;
+            top: -10px; left: -25%;
+            background: var(--liquid-color);
+            border-radius: 45%;
+            animation: wave 4s linear infinite;
+        }
+        
+        /* The solid fill below the wave */
         .liquid::after {
             content: ''; position: absolute;
-            width: 200%; height: 20px;
-            top: -10px; left: 0;
+            width: 100%; height: 100%;
+            top: 20px; left: 0;
             background: var(--liquid-color);
-            border-radius: 40% 45%;
-            animation: wave 3s linear infinite;
         }
 
-        @keyframes wave { to { transform: translateX(-50%); } }
+        @keyframes wave {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
 
         .bubble { position: absolute; background: var(--bubble-color); border-radius: 50%; bottom: -30px; opacity: 0; animation: bubble-rise 4s infinite ease-in; }
         @keyframes bubble-rise { 0% { transform: translateY(0); opacity: 1; } 99% { transform: translateY(-200px); opacity: 1; } 100% { transform: translateY(-200px); opacity: 0; } }
@@ -102,25 +100,20 @@
         .bubble:nth-child(4) { width: 12px; height: 12px; left: 30%; animation-duration: 5s; animation-delay: 0.2s; }
         .bubble:nth-child(5) { width: 6px; height: 6px; left: 65%; animation-duration: 3.5s; animation-delay: 0.8s; }
 
-        /* NEW: VAPOR/STEAM ANIMATION */
-        #vaporContainer { position: absolute; top: -50px; width: 100%; height: 50px; display: none; }
+        /* VAPOR/STEAM ANIMATION */
+        #vaporContainer { position: absolute; top: -50px; width: 100%; height: 50px; display: none; z-index: 15; pointer-events: none; }
         .vapor {
             position: absolute; background: var(--vapor-color);
             border-radius: 50%; bottom: 0;
             opacity: 0; filter: blur(5px);
             animation: rise-and-fade 5s infinite ease-out;
         }
-        @keyframes rise-and-fade {
-            0% { transform: translateY(0) scale(0.5); opacity: 0; }
-            50% { transform: translateY(-40px) scale(1); opacity: 0.6; }
-            100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
-        }
+        @keyframes rise-and-fade { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 50% { transform: translateY(-40px) scale(1); opacity: 0.6; } 100% { transform: translateY(-80px) scale(1.5); opacity: 0; } }
         .vapor:nth-child(1) { width: 15px; height: 15px; left: 50%; animation-delay: 0s; }
         .vapor:nth-child(2) { width: 20px; height: 20px; left: 30%; animation-delay: 1s; }
         .vapor:nth-child(3) { width: 18px; height: 18px; left: 70%; animation-delay: 2.5s; }
-        .vapor:nth-child(4) { width: 12px; height: 12px; left: 40%; animation-delay: 4s; }
-
-        /* --- Hatching Animation --- */
+        
+        /* Hatching Animation (Unchanged) */
         #hatchingAnimation { display: none; }
         .egg-top, .egg-bottom, .heart { position: absolute; left: 50%; transform: translateX(-50%); }
         .egg-top { z-index: 10; transform-origin: bottom center; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 100% 100% 0 0; top: 10px; }
@@ -133,7 +126,7 @@
         @keyframes crack-open { to { transform: translateX(-50%) translateY(-30px) rotate(15deg); } }
         @keyframes show-heart { to { opacity: 1; transform: scale(1) translateY(-10px) translateX(-50%); } }
 
-        /* --- Buttons & Messages --- */
+        /* Buttons & Messages (Unchanged) */
         .button-group { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .btn { font-family: 'Comfortaa', sans-serif; border: none; border-radius: 30px; padding: 15px 25px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; width: 180px; }
         .btn .fa-solid { margin-right: 10px; }
@@ -164,8 +157,7 @@
         
         <div class="animation-container">
             <div id="vaporContainer">
-                <span class="vapor"></span><span class="vapor"></span>
-                <span class="vapor"></span><span class="vapor"></span>
+                <span class="vapor"></span><span class="vapor"></span><span class="vapor"></span>
             </div>
             <div id="activeTimerEgg">
                 <div class="egg">
@@ -192,7 +184,7 @@
     </div>
 
     <script>
-        // The JavaScript logic needs to be updated to control the new vapor animation
+        // JavaScript is unchanged from the previous correct version.
         const DURATION_IN_SECONDS = 0.1 * 60;
         let timeLeft = DURATION_IN_SECONDS;
         let timerInterval;
@@ -210,7 +202,7 @@
         const boilingSound = document.getElementById('boilingSound');
         const activeTimerEgg = document.getElementById('activeTimerEgg');
         const hatchingAnimation = document.getElementById('hatchingAnimation');
-        const vaporContainer = document.getElementById('vaporContainer'); // Get the vapor container
+        const vaporContainer = document.getElementById('vaporContainer');
 
         function updateSoundButton() {
             const icon = soundToggleButton.querySelector('i');
@@ -242,7 +234,7 @@
             
             activeTimerEgg.style.display = 'block';
             hatchingAnimation.style.display = 'none';
-            vaporContainer.style.display = 'block'; // Show vapors
+            vaporContainer.style.display = 'block';
             resetButton.classList.remove('hidden');
             doneMessage.style.display = 'none';
 
@@ -275,7 +267,7 @@
             
             activeTimerEgg.style.display = 'none';
             hatchingAnimation.style.display = 'block';
-            vaporContainer.style.display = 'none'; // Hide vapors
+            vaporContainer.style.display = 'none';
             hatchingAnimation.classList.add('start-hatching');
 
             doneMessage.style.display = 'block';
@@ -297,7 +289,7 @@
 
             activeTimerEgg.style.display = 'block';
             liquidFill.style.height = '0%';
-            vaporContainer.style.display = 'none'; // Hide vapors
+            vaporContainer.style.display = 'none';
             hatchingAnimation.style.display = 'none';
             hatchingAnimation.classList.remove('start-hatching');
             
