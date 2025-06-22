@@ -17,8 +17,9 @@
             --pink-light: #fce4ec;
             --pink-medium: #ff80ab;
             --pink-dark: #c2185b;
-            --liquid-color: rgba(255, 128, 171, 0.6);
-            --bubble-color: rgba(255, 179, 213, 0.8);
+            --liquid-color: rgba(255, 128, 171, 0.7);
+            --bubble-color: rgba(255, 179, 213, 0.9);
+            --vapor-color: rgba(255, 255, 255, 0.6);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -70,51 +71,56 @@
             overflow: hidden;
         }
 
-        #timerDisplay {
-            font-size: 3rem; font-weight: 700; color: var(--pink-dark);
-            position: relative; z-index: 10;
-        }
+        #timerDisplay { font-size: 3rem; font-weight: 700; color: var(--pink-dark); position: relative; z-index: 10; }
 
-        /* --- NEW: LIQUID & BUBBLE ANIMATION --- */
+        /* --- LIQUID & BUBBLE ANIMATION --- */
         .liquid {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: var(--fill-level, 0%); /* JS controls this */
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; height: var(--fill-level, 0%);
             background-color: var(--liquid-color);
             transition: height 1s linear;
-            z-index: 1;
+            z-index: 1; overflow: hidden;
+        }
+        
+        /* NEW: Wave effect for the liquid surface */
+        .liquid::after {
+            content: ''; position: absolute;
+            width: 200%; height: 20px;
+            top: -10px; left: 0;
+            background: var(--liquid-color);
+            border-radius: 40% 45%;
+            animation: wave 3s linear infinite;
         }
 
-        .bubble {
-            position: absolute;
-            background: var(--bubble-color);
-            border-radius: 50%;
-            bottom: -30px; /* Start below the liquid */
-            opacity: 0;
-            animation: bubble-rise 4s infinite ease-in;
-        }
+        @keyframes wave { to { transform: translateX(-50%); } }
 
-        @keyframes bubble-rise {
-            0% { transform: translateY(0); opacity: 1; }
-            99% { transform: translateY(-200px); opacity: 1; }
-            100% { transform: translateY(-200px); opacity: 0; }
-        }
-
-        /* Create variation for each bubble */
+        .bubble { position: absolute; background: var(--bubble-color); border-radius: 50%; bottom: -30px; opacity: 0; animation: bubble-rise 4s infinite ease-in; }
+        @keyframes bubble-rise { 0% { transform: translateY(0); opacity: 1; } 99% { transform: translateY(-200px); opacity: 1; } 100% { transform: translateY(-200px); opacity: 0; } }
         .bubble:nth-child(1) { width: 10px; height: 10px; left: 15%; animation-duration: 3s; animation-delay: 0.5s; }
         .bubble:nth-child(2) { width: 5px; height: 5px; left: 50%; animation-duration: 4.5s; animation-delay: 0.1s; }
         .bubble:nth-child(3) { width: 8px; height: 8px; left: 80%; animation-duration: 2.8s; animation-delay: 1s; }
         .bubble:nth-child(4) { width: 12px; height: 12px; left: 30%; animation-duration: 5s; animation-delay: 0.2s; }
         .bubble:nth-child(5) { width: 6px; height: 6px; left: 65%; animation-duration: 3.5s; animation-delay: 0.8s; }
-        .bubble:nth-child(6) { width: 9px; height: 9px; left: 5%; animation-duration: 4s; animation-delay: 1.5s; }
-        .bubble:nth-child(7) { width: 5px; height: 5px; left: 90%; animation-duration: 3.2s; animation-delay: 0.3s; }
-        .bubble:nth-child(8) { width: 11px; height: 11px; left: 40%; animation-duration: 4.8s; animation-delay: 1.2s; }
-        .bubble:nth-child(9) { width: 7px; height: 7px; left: 20%; animation-duration: 2.5s; animation-delay: 0.6s; }
-        .bubble:nth-child(10) { width: 6px; height: 6px; left: 75%; animation-duration: 5.5s; animation-delay: 0s; }
 
-        /* Hatching animation is unchanged */
+        /* NEW: VAPOR/STEAM ANIMATION */
+        #vaporContainer { position: absolute; top: -50px; width: 100%; height: 50px; display: none; }
+        .vapor {
+            position: absolute; background: var(--vapor-color);
+            border-radius: 50%; bottom: 0;
+            opacity: 0; filter: blur(5px);
+            animation: rise-and-fade 5s infinite ease-out;
+        }
+        @keyframes rise-and-fade {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            50% { transform: translateY(-40px) scale(1); opacity: 0.6; }
+            100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
+        }
+        .vapor:nth-child(1) { width: 15px; height: 15px; left: 50%; animation-delay: 0s; }
+        .vapor:nth-child(2) { width: 20px; height: 20px; left: 30%; animation-delay: 1s; }
+        .vapor:nth-child(3) { width: 18px; height: 18px; left: 70%; animation-delay: 2.5s; }
+        .vapor:nth-child(4) { width: 12px; height: 12px; left: 40%; animation-delay: 4s; }
+
+        /* --- Hatching Animation --- */
         #hatchingAnimation { display: none; }
         .egg-top, .egg-bottom, .heart { position: absolute; left: 50%; transform: translateX(-50%); }
         .egg-top { z-index: 10; transform-origin: bottom center; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 100% 100% 0 0; top: 10px; }
@@ -127,7 +133,7 @@
         @keyframes crack-open { to { transform: translateX(-50%) translateY(-30px) rotate(15deg); } }
         @keyframes show-heart { to { opacity: 1; transform: scale(1) translateY(-10px) translateX(-50%); } }
 
-        /* Buttons and other styles are unchanged */
+        /* --- Buttons & Messages --- */
         .button-group { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .btn { font-family: 'Comfortaa', sans-serif; border: none; border-radius: 30px; padding: 15px 25px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; width: 180px; }
         .btn .fa-solid { margin-right: 10px; }
@@ -157,15 +163,15 @@
         <p class="subtitle">Your perfect egg timer is ready!</p>
         
         <div class="animation-container">
+            <div id="vaporContainer">
+                <span class="vapor"></span><span class="vapor"></span>
+                <span class="vapor"></span><span class="vapor"></span>
+            </div>
             <div id="activeTimerEgg">
                 <div class="egg">
                     <div id="timerDisplay">12:00</div>
                     <div class="liquid">
-                        <!-- Bubbles are generated here -->
-                        <span class="bubble"></span><span class="bubble"></span>
-                        <span class="bubble"></span><span class="bubble"></span>
-                        <span class="bubble"></span><span class="bubble"></span>
-                        <span class="bubble"></span><span class="bubble"></span>
+                        <span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>
                         <span class="bubble"></span><span class="bubble"></span>
                     </div>
                 </div>
@@ -186,15 +192,14 @@
     </div>
 
     <script>
-        // The JavaScript logic is correct and remains unchanged.
-        const DURATION_IN_SECONDS = 0.1* 60;
+        // The JavaScript logic needs to be updated to control the new vapor animation
+        const DURATION_IN_SECONDS = 0.1 * 60;
         let timeLeft = DURATION_IN_SECONDS;
         let timerInterval;
         let timerState = 'ready';
         let isMuted = false;
 
-        const activeTimerEgg = document.getElementById('activeTimerEgg');
-        const liquidFill = document.querySelector('.liquid'); // More specific selector
+        const liquidFill = document.querySelector('.liquid');
         const timerDisplayElements = document.querySelectorAll("#timerDisplay");
         const controlButton = document.getElementById('controlButton');
         const resetButton = document.getElementById('resetButton');
@@ -203,7 +208,9 @@
         const doneMessage = document.getElementById('doneMessage');
         const alarmSound = document.getElementById('alarmSound');
         const boilingSound = document.getElementById('boilingSound');
+        const activeTimerEgg = document.getElementById('activeTimerEgg');
         const hatchingAnimation = document.getElementById('hatchingAnimation');
+        const vaporContainer = document.getElementById('vaporContainer'); // Get the vapor container
 
         function updateSoundButton() {
             const icon = soundToggleButton.querySelector('i');
@@ -235,6 +242,7 @@
             
             activeTimerEgg.style.display = 'block';
             hatchingAnimation.style.display = 'none';
+            vaporContainer.style.display = 'block'; // Show vapors
             resetButton.classList.remove('hidden');
             doneMessage.style.display = 'none';
 
@@ -250,7 +258,7 @@
                 
                 const timeElapsed = DURATION_IN_SECONDS - timeLeft;
                 const fillPercentage = (timeElapsed / DURATION_IN_SECONDS) * 100;
-                liquidFill.style.setProperty('--fill-level', `${fillPercentage}%`);
+                liquidFill.style.height = `${fillPercentage}%`;
 
                 if (timeLeft <= 0) {
                     finishTimer();
@@ -267,6 +275,7 @@
             
             activeTimerEgg.style.display = 'none';
             hatchingAnimation.style.display = 'block';
+            vaporContainer.style.display = 'none'; // Hide vapors
             hatchingAnimation.classList.add('start-hatching');
 
             doneMessage.style.display = 'block';
@@ -287,7 +296,8 @@
             updateAllTimerDisplays(timeLeft);
 
             activeTimerEgg.style.display = 'block';
-            liquidFill.style.setProperty('--fill-level', '0%');
+            liquidFill.style.height = '0%';
+            vaporContainer.style.display = 'none'; // Hide vapors
             hatchingAnimation.style.display = 'none';
             hatchingAnimation.classList.remove('start-hatching');
             
