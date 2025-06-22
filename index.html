@@ -51,7 +51,7 @@
         h1 { font-family: 'Dancing Script', cursive; color: var(--pink-dark); font-size: 2.8rem; margin: 0; }
         .subtitle { font-size: 1rem; color: #666; margin-top: -10px; }
 
-        /* --- Animation Container & Spacing Fix --- */
+        /* --- Animation Container & GAP FIX --- */
         .animation-container {
             position: relative;
             min-height: 180px;
@@ -59,36 +59,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 30px; /* This creates the guaranteed empty space */
+            /* SIGNIFICANTLY INCREASED THE GAP */
+            margin-bottom: 60px;
         }
         
-        /* --- EGG CENTERING FIX --- */
         .egg {
-            width: 120px;
-            height: 160px;
-            background-color: var(--egg-color);
+            width: 120px; height: 160px; background-color: var(--egg-color);
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* This ensures it's always centered */
-            left: 50%;
-            transform: translateX(-50%);
+            position: absolute; display: flex; justify-content: center; align-items: center;
+            left: 50%; transform: translateX(-50%);
         }
         #timerDisplay { font-size: 3rem; font-weight: 700; color: var(--pink-dark); }
         #loadingAnimation { display: none; }
         #loadingAnimation .egg { animation: bobbing 2.5s ease-in-out infinite; }
-        @keyframes bobbing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes bobbing { 0%, 100% { transform: translateY(0) translateX(-50%); } 50% { transform: translateY(-15px) translateX(-50%); } }
         
-        /* --- HATCHING ANIMATION & CENTERING FIX --- */
         #hatchingAnimation { display: none; }
-        .egg-top, .egg-bottom, .heart {
-            position: absolute;
-            left: 50%; /* Center all parts */
-            transform: translateX(-50%);
-        }
+        .egg-top, .egg-bottom, .heart { position: absolute; left: 50%; transform: translateX(-50%); }
         .egg-top { z-index: 10; transform-origin: bottom center; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 100% 100% 0 0; top: 10px; }
         .egg-bottom { z-index: 5; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 0 0 100% 100%; top: 90px; }
         .heart { font-size: 50px; color: var(--pink-medium); z-index: 8; opacity: 0; transform: scale(0) translateX(-50%); }
@@ -96,7 +84,6 @@
         .start-hatching .egg-top, .start-hatching .egg-bottom { animation: shake 0.5s ease-in-out; }
         .start-hatching .egg-top { animation: shake 0.5s ease-in-out, crack-open 1s ease-out 0.5s forwards; }
         .start-hatching .heart { animation: show-heart 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1s forwards; }
-
         @keyframes shake { 0%, 100% { transform: translateX(-50%); } 25% { transform: translateX(calc(-50% - 5px)) rotate(-2deg); } 75% { transform: translateX(calc(-50% + 5px)) rotate(2deg); } }
         @keyframes crack-open { to { transform: translateX(-50%) translateY(-30px) rotate(15deg); } }
         @keyframes show-heart { to { opacity: 1; transform: scale(1) translateY(-10px) translateX(-50%); } }
@@ -112,8 +99,20 @@
         #resetButton { background-color: var(--grey-light); color: var(--grey-dark); border: 2px solid var(--grey-dark); }
         #resetButton:hover { background-color: var(--grey-dark); color: white; transform: translateY(-3px); }
         .hidden { display: none; }
-        #soundToggleButton { position: absolute; top: 20px; right: 20px; background: none; border: 2px solid var(--grey-dark); color: var(--grey-dark); width: 40px; height: 40px; border-radius: 50%; font-size: 1rem; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease; }
-        #soundToggleButton:hover { background-color: var(--grey-dark); color: white; }
+
+        /* --- SOUND BUTTON FIX --- */
+        #soundToggleButton {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: none;
+            border: none; /* NO BORDER */
+            color: var(--grey-dark);
+            font-size: 1.5rem; /* Made icon slightly larger */
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        #soundToggleButton:hover { color: var(--pink-dark); }
 
         /* --- Messages --- */
         .info-text { height: 20px; color: var(--pink-dark); font-size: 0.9rem; }
@@ -127,7 +126,7 @@
     <audio id="boilingSound" src="boiling.mp3" preload="auto" loop></audio>
 
     <div class="container">
-        <button id="soundToggleButton" class="btn" title="Toggle Sound">
+        <button id="soundToggleButton" title="Toggle Sound">
             <i class="fa-solid fa-volume-high"></i>
         </button>
         
@@ -155,7 +154,7 @@
     </div>
 
     <script>
-        // No changes to the JavaScript are needed. The logic remains correct.
+        // The JavaScript logic is correct and remains unchanged.
         const DURATION_IN_SECONDS = 0.1 * 60;
         let timeLeft = DURATION_IN_SECONDS;
         let timerInterval;
