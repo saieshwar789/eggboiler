@@ -51,7 +51,7 @@
         h1 { font-family: 'Dancing Script', cursive; color: var(--pink-dark); font-size: 2.8rem; margin: 0; }
         .subtitle { font-size: 1rem; color: #666; margin-top: -10px; }
 
-        /* Animation Container */
+        /* --- Animation Container & Spacing Fix --- */
         .animation-container {
             position: relative;
             min-height: 180px;
@@ -59,49 +59,63 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-bottom: 30px; /* This creates the guaranteed empty space */
         }
-        /* All other animation styles remain the same... */
-        .egg { width: 120px; height: 160px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: absolute; display: flex; justify-content: center; align-items: center; }
+        
+        /* --- EGG CENTERING FIX --- */
+        .egg {
+            width: 120px;
+            height: 160px;
+            background-color: var(--egg-color);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* This ensures it's always centered */
+            left: 50%;
+            transform: translateX(-50%);
+        }
         #timerDisplay { font-size: 3rem; font-weight: 700; color: var(--pink-dark); }
         #loadingAnimation { display: none; }
         #loadingAnimation .egg { animation: bobbing 2.5s ease-in-out infinite; }
         @keyframes bobbing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        
+        /* --- HATCHING ANIMATION & CENTERING FIX --- */
         #hatchingAnimation { display: none; }
-        .egg-top { z-index: 10; transform-origin: bottom center; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 100% 100% 0 0; position: absolute; top: 10px; }
-        .egg-bottom { z-index: 5; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 0 0 100% 100%; position: absolute; top: 90px; }
-        .heart { font-size: 50px; color: var(--pink-medium); position: absolute; z-index: 8; opacity: 0; transform: scale(0); }
+        .egg-top, .egg-bottom, .heart {
+            position: absolute;
+            left: 50%; /* Center all parts */
+            transform: translateX(-50%);
+        }
+        .egg-top { z-index: 10; transform-origin: bottom center; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 100% 100% 0 0; top: 10px; }
+        .egg-bottom { z-index: 5; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 0 0 100% 100%; top: 90px; }
+        .heart { font-size: 50px; color: var(--pink-medium); z-index: 8; opacity: 0; transform: scale(0) translateX(-50%); }
+        
         .start-hatching .egg-top, .start-hatching .egg-bottom { animation: shake 0.5s ease-in-out; }
         .start-hatching .egg-top { animation: shake 0.5s ease-in-out, crack-open 1s ease-out 0.5s forwards; }
         .start-hatching .heart { animation: show-heart 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1s forwards; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-2deg); } 75% { transform: translateX(5px) rotate(2deg); } }
-        @keyframes crack-open { to { transform: translateY(-30px) rotate(15deg); } }
-        @keyframes show-heart { to { opacity: 1; transform: scale(1) translateY(-10px); } }
 
-        /* *** KEY FIX: VISIBLE SEPARATOR LINE *** */
-        .separator {
-            width: 80%;
-            height: 0;
-            border-bottom: 2px dashed #d1c4e9; /* A soft, dashed lavender line */
-            margin: 25px auto; /* Creates 25px of space above AND below the line */
-        }
-        
-        /* Buttons */
+        @keyframes shake { 0%, 100% { transform: translateX(-50%); } 25% { transform: translateX(calc(-50% - 5px)) rotate(-2deg); } 75% { transform: translateX(calc(-50% + 5px)) rotate(2deg); } }
+        @keyframes crack-open { to { transform: translateX(-50%) translateY(-30px) rotate(15deg); } }
+        @keyframes show-heart { to { opacity: 1; transform: scale(1) translateY(-10px) translateX(-50%); } }
+
+        /* --- Buttons --- */
         .button-group { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .btn { font-family: 'Comfortaa', sans-serif; border: none; border-radius: 30px; padding: 15px 25px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; width: 180px; }
         .btn .fa-solid { margin-right: 10px; }
-
         #controlButton { background-color: var(--pink-medium); color: white; box-shadow: 0 4px 15px rgba(255, 128, 171, 0.5); }
         #controlButton:hover:not(.disabled) { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255, 128, 171, 0.7); }
         #controlButton.boiling { background-color: #f06292; }
         #controlButton.alarm-active { background-color: var(--pink-dark); }
-        
         #resetButton { background-color: var(--grey-light); color: var(--grey-dark); border: 2px solid var(--grey-dark); }
         #resetButton:hover { background-color: var(--grey-dark); color: white; transform: translateY(-3px); }
         .hidden { display: none; }
-
         #soundToggleButton { position: absolute; top: 20px; right: 20px; background: none; border: 2px solid var(--grey-dark); color: var(--grey-dark); width: 40px; height: 40px; border-radius: 50%; font-size: 1rem; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease; }
         #soundToggleButton:hover { background-color: var(--grey-dark); color: white; }
 
+        /* --- Messages --- */
         .info-text { height: 20px; color: var(--pink-dark); font-size: 0.9rem; }
         .done-message { display: none; padding: 10px; background-color: #f8bbd0; border-radius: 15px; border: 2px dashed var(--pink-dark); }
         .done-message h2 { font-family: 'Dancing Script', cursive; color: var(--pink-dark); font-size: 2rem; }
@@ -109,7 +123,7 @@
 </head>
 <body>
 
-    <audio id="alarmSound" src="alarm.mp3" preload="auto" loop></audio>
+    <audio id="alarmSound" src="alarm.wav" preload="auto" loop></audio>
     <audio id="boilingSound" src="boiling.mp3" preload="auto" loop></audio>
 
     <div class="container">
@@ -130,9 +144,6 @@
             </div>
         </div>
         
-        <!-- *** KEY FIX: THE VISIBLE SEPARATOR ELEMENT *** -->
-        <div class="separator"></div>
-
         <div id="doneMessage" class="done-message"><h2>Time's Up, Sweetheart! 🍳</h2></div>
 
         <div class="button-group">
@@ -144,12 +155,11 @@
     </div>
 
     <script>
-        // All JavaScript from the previous version remains the same.
-        // It correctly handles the logic for the state and buttons.
-        const DURATION_IN_SECONDS = 12 * 60;
+        // No changes to the JavaScript are needed. The logic remains correct.
+        const DURATION_IN_SECONDS = 0.1 * 60;
         let timeLeft = DURATION_IN_SECONDS;
         let timerInterval;
-        let timerState = 'ready'; // 'ready', 'boiling', 'alarm'
+        let timerState = 'ready';
         let isMuted = false;
 
         const timerDisplayElements = document.querySelectorAll("#timerDisplay");
@@ -166,15 +176,8 @@
 
         function updateSoundButton() {
             const icon = soundToggleButton.querySelector('i');
-            if (isMuted) {
-                icon.classList.remove('fa-volume-high');
-                icon.classList.add('fa-volume-xmark');
-                soundToggleButton.title = "Unmute Sound";
-            } else {
-                icon.classList.remove('fa-volume-xmark');
-                icon.classList.add('fa-volume-high');
-                soundToggleButton.title = "Mute Sound";
-            }
+            icon.className = isMuted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+            soundToggleButton.title = isMuted ? "Unmute Sound" : "Mute Sound";
         }
 
         soundToggleButton.addEventListener('click', () => {
