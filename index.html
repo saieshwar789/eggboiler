@@ -105,7 +105,7 @@
             transition: opacity 0.5s ease;
         }
         
-        /* --- Dancing Egg Styling --- */
+        /* --- Dancing Egg Styling (Now always on) --- */
         .egg-wrapper {
             height: 100px;
             margin-top: 15px;
@@ -120,14 +120,10 @@
             background-color: #fff9c4;
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            display: none; /* Hidden by default */
+            display: block; /* <-- CHANGED from 'none' */
+            animation: dance 1.5s infinite ease-in-out; /* <-- MOVED animation here */
         }
         
-        #egg.dancing {
-            display: block;
-            animation: dance 1.5s infinite ease-in-out;
-        }
-
         @keyframes dance {
             0%, 100% { transform: rotate(0deg) translateY(0); }
             25% { transform: rotate(-15deg) translateY(-10px); }
@@ -136,7 +132,7 @@
 
         /* --- Done Message Styling --- */
         .done-message {
-            display: none; /* <<< THIS IS THE CORRECTED LINE */
+            display: none; /* Hidden by default */
             margin-top: 10px;
             padding: 15px;
             background-color: #f8bbd0;
@@ -181,7 +177,7 @@
         </div>
     </div>
     
-    <audio id="alarmSound" src="audio.mp3" preload="auto"></audio>
+    <audio id="alarmSound" src="alarm.mp3" preload="auto"></audio>
 
     <script>
         // --- Get HTML Elements ---
@@ -190,10 +186,10 @@
         const startTimeInfo = document.getElementById('startTimeInfo');
         const doneMessage = document.getElementById('doneMessage');
         const alarmSound = document.getElementById('alarmSound');
-        const egg = document.getElementById('egg');
+        // The egg element is no longer needed in the script
 
         // --- Timer Configuration ---
-        const DURATION_IN_SECONDS = 1 * 60;
+        const DURATION_IN_SECONDS = 0.5 * 60;
         let timerInterval;
         let timeLeft = DURATION_IN_SECONDS;
         
@@ -209,9 +205,7 @@
             // Reset UI state
             timeLeft = DURATION_IN_SECONDS;
             updateTimerDisplay(timeLeft);
-            doneMessage.style.display = 'none';
-            egg.classList.remove('dancing');
-            egg.style.display = 'none';
+            doneMessage.style.display = 'none'; // Hide the 'done' message
             startButton.disabled = true;
             startButton.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> Boiling...';
 
@@ -233,10 +227,8 @@
             clearInterval(timerInterval);
             alarmSound.play();
             
-            // Show celebration elements
+            // Show celebration message
             doneMessage.style.display = 'block';
-            egg.style.display = 'block';
-            egg.classList.add('dancing');
             
             startTimeInfo.style.opacity = '0';
             
