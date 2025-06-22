@@ -2,10 +2,10 @@
 
 /* --- Color Palette & Font --- */
 :root {
-    --bg-color: #FFF8E1;      /* A creamy, warm white */
-    --primary-color: #FFC107; /* A vibrant yolk yellow */
-    --text-color: #5D4037;    /* A soft, dark brown */
-    --button-hover: #FFA000;  /* A slightly darker yellow for hover */
+    --bg-color: #FFF8E1;
+    --primary-color: #FFC107;
+    --text-color: #5D4037;
+    --button-hover: #FFA000;
     --font-family: 'Poppins', sans-serif;
 }
 
@@ -29,7 +29,7 @@ body {
 
 .container {
     padding: 2rem;
-    background: rgba(255, 255, 255, 0.5); /* A slightly transparent white card */
+    background: rgba(255, 255, 255, 0.5);
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
     width: 90%;
@@ -50,29 +50,16 @@ h1 {
     color: #795548;
 }
 
-/* style.css */
-
-/* --- Styling for the new start time display --- */
-.start-time-display {
-    font-size: 0.9rem;
-    color: #A1887F; /* A softer brown color */
-    margin-bottom: 2rem;
-    height: 1rem; /* Reserve space so layout doesn't jump */
-    font-weight: 300;
-}
-
 /* --- The Egg! --- */
 .egg-container {
     margin-bottom: 2rem;
 }
 
-/* NEW CSS RULE */
 .egg-container svg {
     width: 100px;
     transition: transform 0.5s ease-in-out;
 }
 
-/* The "boiling" animation */
 .boiling {
     animation: wobble 2s infinite ease-in-out;
 }
@@ -87,8 +74,17 @@ h1 {
 .timer-display {
     font-size: 4.5rem;
     font-weight: 600;
-    margin-bottom: 2rem;
 }
+
+/* --- Styling for the start time display --- */
+.start-time-display {
+    font-size: 0.9rem;
+    color: #A1887F;
+    margin-bottom: 2rem;
+    min-height: 1rem; /* Use min-height to allow growth */
+    font-weight: 300;
+}
+
 
 /* --- Controls & Buttons --- */
 .controls {
@@ -104,7 +100,7 @@ h1 {
     font-weight: 600;
     padding: 0.8rem 1.8rem;
     border: none;
-    border-radius: 50px; /* Fully rounded buttons */
+    border-radius: 50px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
@@ -123,7 +119,7 @@ h1 {
 .reset-button {
     background-color: transparent;
     color: var(--text-color);
-    border: 2px solid #D7CCC8; /* A very light brown border */
+    border: 2px solid #D7CCC8;
 }
 
 .reset-button:hover {
