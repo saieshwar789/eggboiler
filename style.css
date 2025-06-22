@@ -50,6 +50,17 @@ h1 {
     color: #795548;
 }
 
+/* style.css */
+
+/* --- Styling for the new start time display --- */
+.start-time-display {
+    font-size: 0.9rem;
+    color: #A1887F; /* A softer brown color */
+    margin-bottom: 2rem;
+    height: 1rem; /* Reserve space so layout doesn't jump */
+    font-weight: 300;
+}
+
 /* --- The Egg! --- */
 .egg-container {
     margin-bottom: 2rem;
