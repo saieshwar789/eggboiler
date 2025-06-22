@@ -20,6 +20,7 @@
             --lavender-light: #e1bee7;
             --grey-light: #f0f0f0;
             --grey-dark: #757575;
+            --liquid-color: rgba(255, 128, 171, 0.6); /* Translucent pink for the fill */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,7 +52,6 @@
         h1 { font-family: 'Dancing Script', cursive; color: var(--pink-dark); font-size: 2.8rem; margin: 0; }
         .subtitle { font-size: 1rem; color: #666; margin-top: -10px; }
 
-        /* --- Animation Container & GAP FIX --- */
         .animation-container {
             position: relative;
             min-height: 180px;
@@ -59,28 +59,44 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* DOUBLED THE GAP */
-            margin-bottom: 120px;
+            margin-bottom: 120px; /* The large gap */
         }
         
         .egg {
-            width: 120px; height: 160px; background-color: var(--egg-color);
+            width: 120px; height: 160px;
+            background-color: var(--egg-color);
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             position: absolute; display: flex; justify-content: center; align-items: center;
             left: 50%; transform: translateX(-50%);
+            /* NEW: Crucial for the liquid effect */
+            overflow: hidden; 
         }
-        #timerDisplay { font-size: 3rem; font-weight: 700; color: var(--pink-dark); }
-        #loadingAnimation { display: none; }
-        #loadingAnimation .egg { animation: bobbing 2.5s ease-in-out infinite; }
-        @keyframes bobbing { 0%, 100% { transform: translateY(0) translateX(-50%); } 50% { transform: translateY(-15px) translateX(-50%); } }
-        
+
+        /* --- NEW: LIQUID FILL ANIMATION --- */
+        .egg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: var(--fill-level, 0%); /* Controlled by JS */
+            background-color: var(--liquid-color);
+            transition: height 1s linear; /* Smoothly animates the fill */
+        }
+
+        #timerDisplay {
+            font-size: 3rem; font-weight: 700; color: var(--pink-dark);
+            position: relative; /* Ensures text is on top of the liquid */
+            z-index: 2;
+        }
+
+        /* --- Static & Hatching animations remain the same --- */
         #hatchingAnimation { display: none; }
         .egg-top, .egg-bottom, .heart { position: absolute; left: 50%; transform: translateX(-50%); }
         .egg-top { z-index: 10; transform-origin: bottom center; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 100% 100% 0 0; top: 10px; }
         .egg-bottom { z-index: 5; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 0 0 100% 100%; top: 90px; }
         .heart { font-size: 50px; color: var(--pink-medium); z-index: 8; opacity: 0; transform: scale(0) translateX(-50%); }
-        
         .start-hatching .egg-top, .start-hatching .egg-bottom { animation: shake 0.5s ease-in-out; }
         .start-hatching .egg-top { animation: shake 0.5s ease-in-out, crack-open 1s ease-out 0.5s forwards; }
         .start-hatching .heart { animation: show-heart 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1s forwards; }
@@ -99,15 +115,9 @@
         #resetButton { background-color: var(--grey-light); color: var(--grey-dark); border: 2px solid var(--grey-dark); }
         #resetButton:hover { background-color: var(--grey-dark); color: white; transform: translateY(-3px); }
         .hidden { display: none; }
-
-        #soundToggleButton {
-            position: absolute; top: 25px; right: 25px;
-            background: none; border: none; color: var(--grey-dark);
-            font-size: 1.5rem; cursor: pointer; transition: color 0.2s ease;
-        }
+        #soundToggleButton { position: absolute; top: 25px; right: 25px; background: none; border: none; color: var(--grey-dark); font-size: 1.5rem; cursor: pointer; transition: color 0.2s ease; }
         #soundToggleButton:hover { color: var(--pink-dark); }
 
-        /* --- Messages --- */
         .info-text { height: 20px; color: var(--pink-dark); font-size: 0.9rem; }
         .done-message { display: none; padding: 10px; background-color: #f8bbd0; border-radius: 15px; border: 2px dashed var(--pink-dark); }
         .done-message h2 { font-family: 'Dancing Script', cursive; color: var(--pink-dark); font-size: 2rem; }
@@ -115,20 +125,21 @@
 </head>
 <body>
 
-    <audio id="alarmSound" src="alarm.wav" preload="auto" loop></audio>
+    <audio id="alarmSound" src="alarm.mp3" preload="auto" loop></audio>
     <audio id="boilingSound" src="boiling.mp3" preload="auto" loop></audio>
 
     <div class="container">
-        <button id="soundToggleButton" title="Toggle Sound">
-            <i class="fa-solid fa-volume-high"></i>
-        </button>
+        <button id="soundToggleButton" title="Toggle Sound"><i class="fa-solid fa-volume-high"></i></button>
         
         <h1>For My Dearest</h1>
         <p class="subtitle">Your perfect egg timer is ready!</p>
         
         <div class="animation-container">
-            <div id="staticEgg"><div class="egg"><div id="timerDisplay">12:00</div></div></div>
-            <div id="loadingAnimation"><div class="egg"><div id="timerDisplay">12:00</div></div></div>
+            <!-- This container now serves for the static and filling egg -->
+            <div id="activeTimerEgg">
+                <div class="egg"><div id="timerDisplay">12:00</div></div>
+            </div>
+            <!-- Hatching animation is separate -->
             <div id="hatchingAnimation">
                 <div class="egg-bottom"></div>
                 <div class="heart"><i class="fa-solid fa-heart"></i></div>
@@ -137,23 +148,21 @@
         </div>
         
         <div id="doneMessage" class="done-message"><h2>Time's Up, Sweetheart! 🍳</h2></div>
-
         <div class="button-group">
             <button id="controlButton" class="btn"><i class="fa-solid fa-play"></i> Start</button>
             <button id="resetButton" class="btn hidden"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
         </div>
-
         <p id="startTimeInfo" class="info-text"></p>
     </div>
 
     <script>
-        // The JavaScript logic is correct and remains unchanged.
         const DURATION_IN_SECONDS = 12 * 60;
         let timeLeft = DURATION_IN_SECONDS;
         let timerInterval;
         let timerState = 'ready';
         let isMuted = false;
 
+        const activeTimerEgg = document.getElementById('activeTimerEgg');
         const timerDisplayElements = document.querySelectorAll("#timerDisplay");
         const controlButton = document.getElementById('controlButton');
         const resetButton = document.getElementById('resetButton');
@@ -162,8 +171,6 @@
         const doneMessage = document.getElementById('doneMessage');
         const alarmSound = document.getElementById('alarmSound');
         const boilingSound = document.getElementById('boilingSound');
-        const staticEgg = document.getElementById('staticEgg');
-        const loadingAnimation = document.getElementById('loadingAnimation');
         const hatchingAnimation = document.getElementById('hatchingAnimation');
 
         function updateSoundButton() {
@@ -176,8 +183,7 @@
             isMuted = !isMuted;
             updateSoundButton();
             if (isMuted) {
-                boilingSound.pause();
-                alarmSound.pause();
+                boilingSound.pause(); alarmSound.pause();
             } else {
                 if (timerState === 'boiling') boilingSound.play();
                 if (timerState === 'alarm') alarmSound.play();
@@ -195,8 +201,8 @@
             timerState = 'boiling';
             if (!isMuted) boilingSound.play();
             
-            staticEgg.style.display = 'none';
-            loadingAnimation.style.display = 'block';
+            activeTimerEgg.style.display = 'block';
+            hatchingAnimation.style.display = 'none';
             resetButton.classList.remove('hidden');
             doneMessage.style.display = 'none';
 
@@ -209,6 +215,12 @@
             timerInterval = setInterval(() => {
                 timeLeft--;
                 updateAllTimerDisplays(timeLeft);
+                
+                // NEW: Calculate and set the fill level
+                const timeElapsed = DURATION_IN_SECONDS - timeLeft;
+                const fillPercentage = (timeElapsed / DURATION_IN_SECONDS) * 100;
+                activeTimerEgg.style.setProperty('--fill-level', `${fillPercentage}%`);
+
                 if (timeLeft <= 0) {
                     finishTimer();
                 }
@@ -219,12 +231,10 @@
             clearInterval(timerInterval);
             timerState = 'alarm';
             
-            boilingSound.pause();
-            boilingSound.currentTime = 0;
-
+            boilingSound.pause(); boilingSound.currentTime = 0;
             if (!isMuted) alarmSound.play();
             
-            loadingAnimation.style.display = 'none';
+            activeTimerEgg.style.display = 'none';
             hatchingAnimation.style.display = 'block';
             hatchingAnimation.classList.add('start-hatching');
 
@@ -238,17 +248,16 @@
         
         function resetTimer() {
             clearInterval(timerInterval);
-            boilingSound.pause();
-            alarmSound.pause();
-            boilingSound.currentTime = 0;
-            alarmSound.currentTime = 0;
+            boilingSound.pause(); alarmSound.pause();
+            boilingSound.currentTime = 0; alarmSound.currentTime = 0;
 
             timerState = 'ready';
             timeLeft = DURATION_IN_SECONDS;
             updateAllTimerDisplays(timeLeft);
 
-            staticEgg.style.display = 'block';
-            loadingAnimation.style.display = 'none';
+            // Reset animations and fill level
+            activeTimerEgg.style.display = 'block';
+            activeTimerEgg.style.setProperty('--fill-level', '0%');
             hatchingAnimation.style.display = 'none';
             hatchingAnimation.classList.remove('start-hatching');
             
