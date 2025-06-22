@@ -55,7 +55,8 @@ h1 {
     margin-bottom: 2rem;
 }
 
-.egg-image {
+/* NEW CSS RULE */
+.egg-container svg {
     width: 100px;
     transition: transform 0.5s ease-in-out;
 }
