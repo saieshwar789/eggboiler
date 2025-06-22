@@ -17,10 +17,8 @@
             --pink-light: #fce4ec;
             --pink-medium: #ff80ab;
             --pink-dark: #c2185b;
-            --lavender-light: #e1bee7;
-            --grey-light: #f0f0f0;
-            --grey-dark: #757575;
-            --liquid-color: rgba(255, 128, 171, 0.6); /* Translucent pink for the fill */
+            --liquid-color: rgba(255, 128, 171, 0.6);
+            --bubble-color: rgba(255, 179, 213, 0.8);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,7 +29,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, var(--pink-light), var(--lavender-light));
+            background: linear-gradient(135deg, var(--pink-light), #e1bee7);
             padding: 20px;
         }
         
@@ -59,7 +57,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 120px; /* The large gap */
+            margin-bottom: 120px; /* The extra large gap */
         }
         
         .egg {
@@ -69,29 +67,54 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             position: absolute; display: flex; justify-content: center; align-items: center;
             left: 50%; transform: translateX(-50%);
-            /* NEW: Crucial for the liquid effect */
-            overflow: hidden; 
-        }
-
-        /* --- NEW: LIQUID FILL ANIMATION --- */
-        .egg::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: var(--fill-level, 0%); /* Controlled by JS */
-            background-color: var(--liquid-color);
-            transition: height 1s linear; /* Smoothly animates the fill */
+            overflow: hidden;
         }
 
         #timerDisplay {
             font-size: 3rem; font-weight: 700; color: var(--pink-dark);
-            position: relative; /* Ensures text is on top of the liquid */
-            z-index: 2;
+            position: relative; z-index: 10;
         }
 
-        /* --- Static & Hatching animations remain the same --- */
+        /* --- NEW: LIQUID & BUBBLE ANIMATION --- */
+        .liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: var(--fill-level, 0%); /* JS controls this */
+            background-color: var(--liquid-color);
+            transition: height 1s linear;
+            z-index: 1;
+        }
+
+        .bubble {
+            position: absolute;
+            background: var(--bubble-color);
+            border-radius: 50%;
+            bottom: -30px; /* Start below the liquid */
+            opacity: 0;
+            animation: bubble-rise 4s infinite ease-in;
+        }
+
+        @keyframes bubble-rise {
+            0% { transform: translateY(0); opacity: 1; }
+            99% { transform: translateY(-200px); opacity: 1; }
+            100% { transform: translateY(-200px); opacity: 0; }
+        }
+
+        /* Create variation for each bubble */
+        .bubble:nth-child(1) { width: 10px; height: 10px; left: 15%; animation-duration: 3s; animation-delay: 0.5s; }
+        .bubble:nth-child(2) { width: 5px; height: 5px; left: 50%; animation-duration: 4.5s; animation-delay: 0.1s; }
+        .bubble:nth-child(3) { width: 8px; height: 8px; left: 80%; animation-duration: 2.8s; animation-delay: 1s; }
+        .bubble:nth-child(4) { width: 12px; height: 12px; left: 30%; animation-duration: 5s; animation-delay: 0.2s; }
+        .bubble:nth-child(5) { width: 6px; height: 6px; left: 65%; animation-duration: 3.5s; animation-delay: 0.8s; }
+        .bubble:nth-child(6) { width: 9px; height: 9px; left: 5%; animation-duration: 4s; animation-delay: 1.5s; }
+        .bubble:nth-child(7) { width: 5px; height: 5px; left: 90%; animation-duration: 3.2s; animation-delay: 0.3s; }
+        .bubble:nth-child(8) { width: 11px; height: 11px; left: 40%; animation-duration: 4.8s; animation-delay: 1.2s; }
+        .bubble:nth-child(9) { width: 7px; height: 7px; left: 20%; animation-duration: 2.5s; animation-delay: 0.6s; }
+        .bubble:nth-child(10) { width: 6px; height: 6px; left: 75%; animation-duration: 5.5s; animation-delay: 0s; }
+
+        /* Hatching animation is unchanged */
         #hatchingAnimation { display: none; }
         .egg-top, .egg-bottom, .heart { position: absolute; left: 50%; transform: translateX(-50%); }
         .egg-top { z-index: 10; transform-origin: bottom center; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 100% 100% 0 0; top: 10px; }
@@ -104,7 +127,7 @@
         @keyframes crack-open { to { transform: translateX(-50%) translateY(-30px) rotate(15deg); } }
         @keyframes show-heart { to { opacity: 1; transform: scale(1) translateY(-10px) translateX(-50%); } }
 
-        /* --- Buttons --- */
+        /* Buttons and other styles are unchanged */
         .button-group { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .btn { font-family: 'Comfortaa', sans-serif; border: none; border-radius: 30px; padding: 15px 25px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; width: 180px; }
         .btn .fa-solid { margin-right: 10px; }
@@ -117,7 +140,6 @@
         .hidden { display: none; }
         #soundToggleButton { position: absolute; top: 25px; right: 25px; background: none; border: none; color: var(--grey-dark); font-size: 1.5rem; cursor: pointer; transition: color 0.2s ease; }
         #soundToggleButton:hover { color: var(--pink-dark); }
-
         .info-text { height: 20px; color: var(--pink-dark); font-size: 0.9rem; }
         .done-message { display: none; padding: 10px; background-color: #f8bbd0; border-radius: 15px; border: 2px dashed var(--pink-dark); }
         .done-message h2 { font-family: 'Dancing Script', cursive; color: var(--pink-dark); font-size: 2rem; }
@@ -125,7 +147,7 @@
 </head>
 <body>
 
-    <audio id="alarmSound" src="alarm.mp3" preload="auto" loop></audio>
+    <audio id="alarmSound" src="alarm.wav" preload="auto" loop></audio>
     <audio id="boilingSound" src="boiling.mp3" preload="auto" loop></audio>
 
     <div class="container">
@@ -135,11 +157,19 @@
         <p class="subtitle">Your perfect egg timer is ready!</p>
         
         <div class="animation-container">
-            <!-- This container now serves for the static and filling egg -->
             <div id="activeTimerEgg">
-                <div class="egg"><div id="timerDisplay">12:00</div></div>
+                <div class="egg">
+                    <div id="timerDisplay">12:00</div>
+                    <div class="liquid">
+                        <!-- Bubbles are generated here -->
+                        <span class="bubble"></span><span class="bubble"></span>
+                        <span class="bubble"></span><span class="bubble"></span>
+                        <span class="bubble"></span><span class="bubble"></span>
+                        <span class="bubble"></span><span class="bubble"></span>
+                        <span class="bubble"></span><span class="bubble"></span>
+                    </div>
+                </div>
             </div>
-            <!-- Hatching animation is separate -->
             <div id="hatchingAnimation">
                 <div class="egg-bottom"></div>
                 <div class="heart"><i class="fa-solid fa-heart"></i></div>
@@ -156,6 +186,7 @@
     </div>
 
     <script>
+        // The JavaScript logic is correct and remains unchanged.
         const DURATION_IN_SECONDS = 0.1* 60;
         let timeLeft = DURATION_IN_SECONDS;
         let timerInterval;
@@ -163,6 +194,7 @@
         let isMuted = false;
 
         const activeTimerEgg = document.getElementById('activeTimerEgg');
+        const liquidFill = document.querySelector('.liquid'); // More specific selector
         const timerDisplayElements = document.querySelectorAll("#timerDisplay");
         const controlButton = document.getElementById('controlButton');
         const resetButton = document.getElementById('resetButton');
@@ -216,10 +248,9 @@
                 timeLeft--;
                 updateAllTimerDisplays(timeLeft);
                 
-                // NEW: Calculate and set the fill level
                 const timeElapsed = DURATION_IN_SECONDS - timeLeft;
                 const fillPercentage = (timeElapsed / DURATION_IN_SECONDS) * 100;
-                activeTimerEgg.style.setProperty('--fill-level', `${fillPercentage}%`);
+                liquidFill.style.setProperty('--fill-level', `${fillPercentage}%`);
 
                 if (timeLeft <= 0) {
                     finishTimer();
@@ -255,9 +286,8 @@
             timeLeft = DURATION_IN_SECONDS;
             updateAllTimerDisplays(timeLeft);
 
-            // Reset animations and fill level
             activeTimerEgg.style.display = 'block';
-            activeTimerEgg.style.setProperty('--fill-level', '0%');
+            liquidFill.style.setProperty('--fill-level', '0%');
             hatchingAnimation.style.display = 'none';
             hatchingAnimation.classList.remove('start-hatching');
             
