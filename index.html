@@ -33,8 +33,7 @@
             background: linear-gradient(135deg, var(--pink-light), var(--lavender-light));
             padding: 20px;
         }
-
-        /* --- LAYOUT FIX: Using Flexbox for robust layout --- */
+        
         .container {
             background: rgba(255, 255, 255, 0.9);
             padding: 30px;
@@ -44,119 +43,80 @@
             max-width: 400px;
             width: 100%;
             display: flex;
-            flex-direction: column; /* Stack elements vertically */
-            gap: 15px; /* Space between elements */
+            flex-direction: column;
+            gap: 15px;
+            position: relative; /* Needed for the sound button */
         }
 
-        h1 {
-            font-family: 'Dancing Script', cursive;
-            color: var(--pink-dark);
-            font-size: 2.8rem;
-            margin: 0;
-        }
+        h1 { font-family: 'Dancing Script', cursive; color: var(--pink-dark); font-size: 2.8rem; margin: 0; }
+        .subtitle { font-size: 1rem; color: #666; margin-top: -10px; }
 
-        .subtitle {
-            font-size: 1rem;
-            color: #666;
-            margin-top: -10px; /* Pull it closer to the title */
-        }
-
-        /* --- Animation Container --- */
+        /* --- Animation Container & GAP FIX --- */
         .animation-container {
             position: relative;
-            min-height: 180px; /* Reserve space to prevent layout jumps */
+            min-height: 180px;
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-bottom: 20px; /* This creates the guaranteed gap */
         }
 
         .egg {
-            width: 120px;
-            height: 160px;
-            background-color: var(--egg-color);
+            width: 120px; height: 160px; background-color: var(--egg-color);
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: absolute; display: flex; justify-content: center; align-items: center;
         }
-        
-        #timerDisplay {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--pink-dark);
-        }
-
+        #timerDisplay { font-size: 3rem; font-weight: 700; color: var(--pink-dark); }
         #loadingAnimation { display: none; }
         #loadingAnimation .egg { animation: bobbing 2.5s ease-in-out infinite; }
-
-        @keyframes bobbing {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
+        @keyframes bobbing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        
         #hatchingAnimation { display: none; }
         .egg-top { z-index: 10; transform-origin: bottom center; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 100% 100% 0 0; position: absolute; top: 10px; }
         .egg-bottom { z-index: 5; width: 120px; height: 80px; background-color: var(--egg-color); border-radius: 50% 50% 50% 50% / 0 0 100% 100%; position: absolute; top: 90px; }
         .heart { font-size: 50px; color: var(--pink-medium); position: absolute; z-index: 8; opacity: 0; transform: scale(0); }
-
         .start-hatching .egg-top, .start-hatching .egg-bottom { animation: shake 0.5s ease-in-out; }
         .start-hatching .egg-top { animation: shake 0.5s ease-in-out, crack-open 1s ease-out 0.5s forwards; }
         .start-hatching .heart { animation: show-heart 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1s forwards; }
-
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-2deg); } 75% { transform: translateX(5px) rotate(2deg); } }
         @keyframes crack-open { to { transform: translateY(-30px) rotate(15deg); } }
         @keyframes show-heart { to { opacity: 1; transform: scale(1) translateY(-10px); } }
 
         /* --- Buttons --- */
-        .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap; /* Allow buttons to wrap on small screens */
-        }
-        
-        .btn { /* Base style for all buttons */
-            font-family: 'Comfortaa', sans-serif;
-            border: none;
-            border-radius: 30px;
-            padding: 15px 25px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 180px; /* Give buttons a consistent width */
-        }
+        .button-group { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .btn { font-family: 'Comfortaa', sans-serif; border: none; border-radius: 30px; padding: 15px 25px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; width: 180px; }
         .btn .fa-solid { margin-right: 10px; }
 
-        #controlButton {
-            background-color: var(--pink-medium);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 128, 171, 0.5);
-        }
-        #controlButton:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 128, 171, 0.7);
-        }
-        
-        #controlButton.boiling { background-color: #f48fb1; } /* Slightly different pink for "Stop" */
+        #controlButton { background-color: var(--pink-medium); color: white; box-shadow: 0 4px 15px rgba(255, 128, 171, 0.5); }
+        #controlButton:hover:not(.disabled) { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255, 128, 171, 0.7); }
+        #controlButton.boiling { background-color: #f06292; } /* A different pink for "Stop" */
         #controlButton.alarm-active { background-color: var(--pink-dark); }
         
-        /* NEW: Reset Button Style */
-        #resetButton {
-            background-color: var(--grey-light);
-            color: var(--grey-dark);
-            border: 2px solid var(--grey-dark);
-        }
-        #resetButton:hover {
-            background-color: var(--grey-dark);
-            color: white;
-            transform: translateY(-3px);
-        }
+        #resetButton { background-color: var(--grey-light); color: var(--grey-dark); border: 2px solid var(--grey-dark); }
+        #resetButton:hover { background-color: var(--grey-dark); color: white; transform: translateY(-3px); }
+        .hidden { display: none; }
 
-        .hidden { display: none; } /* Utility class to hide elements */
+        /* --- NEW: Sound Toggle Button --- */
+        #soundToggleButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: 2px solid var(--grey-dark);
+            color: var(--grey-dark);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #soundToggleButton:hover { background-color: var(--grey-dark); color: white; }
 
         /* --- Messages --- */
         .info-text { height: 20px; color: var(--pink-dark); font-size: 0.9rem; }
@@ -170,20 +130,16 @@
     <audio id="boilingSound" src="boiling.mp3" preload="auto" loop></audio>
 
     <div class="container">
+        <button id="soundToggleButton" class="btn" title="Toggle Sound">
+            <i class="fa-solid fa-volume-high"></i>
+        </button>
+        
         <h1>For My Dearest</h1>
         <p class="subtitle">Your perfect egg timer is ready!</p>
         
         <div class="animation-container">
-            <div id="staticEgg">
-                <div class="egg">
-                    <div id="timerDisplay">12:00</div>
-                </div>
-            </div>
-            <div id="loadingAnimation">
-                <div class="egg">
-                    <div id="timerDisplay">12:00</div>
-                </div>
-            </div>
+            <div id="staticEgg"><div class="egg"><div id="timerDisplay">12:00</div></div></div>
+            <div id="loadingAnimation"><div class="egg"><div id="timerDisplay">12:00</div></div></div>
             <div id="hatchingAnimation">
                 <div class="egg-bottom"></div>
                 <div class="heart"><i class="fa-solid fa-heart"></i></div>
@@ -191,12 +147,10 @@
             </div>
         </div>
 
-        <div id="doneMessage" class="done-message">
-            <h2>Time's Up, Sweetheart! 🍳</h2>
-        </div>
+        <div id="doneMessage" class="done-message"><h2>Time's Up, Sweetheart! 🍳</h2></div>
 
         <div class="button-group">
-            <button id="controlButton" class="btn"><i class="fa-solid fa-play"></i> Start Boiling</button>
+            <button id="controlButton" class="btn"><i class="fa-solid fa-play"></i> Start</button>
             <button id="resetButton" class="btn hidden"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
         </div>
 
@@ -204,41 +158,66 @@
     </div>
 
     <script>
-        const timerDisplay = document.getElementById('timerDisplay');
+        const DURATION_IN_SECONDS = 0.1 * 60;
+        let timeLeft = DURATION_IN_SECONDS;
+        let timerInterval;
+        let timerState = 'ready'; // 'ready', 'boiling', 'alarm'
+        let isMuted = false; // NEW sound state
+
+        // --- DOM Elements ---
+        const timerDisplayElements = document.querySelectorAll("#timerDisplay");
         const controlButton = document.getElementById('controlButton');
-        const resetButton = document.getElementById('resetButton'); // New button
+        const resetButton = document.getElementById('resetButton');
+        const soundToggleButton = document.getElementById('soundToggleButton');
         const startTimeInfo = document.getElementById('startTimeInfo');
         const doneMessage = document.getElementById('doneMessage');
         const alarmSound = document.getElementById('alarmSound');
         const boilingSound = document.getElementById('boilingSound');
-        
         const staticEgg = document.getElementById('staticEgg');
         const loadingAnimation = document.getElementById('loadingAnimation');
         const hatchingAnimation = document.getElementById('hatchingAnimation');
 
-        const DURATION_IN_SECONDS = 0.1* 60;
-        let timerInterval;
-        let timeLeft = DURATION_IN_SECONDS;
-        let timerState = 'ready'; // 'ready', 'boiling', 'alarm'
+        // --- Sound Functions ---
+        function updateSoundButton() {
+            const icon = soundToggleButton.querySelector('i');
+            if (isMuted) {
+                icon.classList.remove('fa-volume-high');
+                icon.classList.add('fa-volume-xmark');
+                soundToggleButton.title = "Unmute Sound";
+            } else {
+                icon.classList.remove('fa-volume-xmark');
+                icon.classList.add('fa-volume-high');
+                soundToggleButton.title = "Mute Sound";
+            }
+        }
 
-        function updateTimerOnAllDisplays(seconds) {
+        soundToggleButton.addEventListener('click', () => {
+            isMuted = !isMuted;
+            updateSoundButton();
+            // If muting, immediately stop any playing sounds
+            if (isMuted) {
+                boilingSound.pause();
+                alarmSound.pause();
+            }
+        });
+
+        // --- Timer Functions ---
+        function updateAllTimerDisplays(seconds) {
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = seconds % 60;
             const formattedTime = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-            
-            // Update the timer text in all three animation states
-            document.querySelectorAll("#timerDisplay").forEach(el => el.textContent = formattedTime);
+            timerDisplayElements.forEach(el => el.textContent = formattedTime);
         }
         
         function startTimer() {
             timerState = 'boiling';
-            boilingSound.play();
+            if (!isMuted) boilingSound.play();
             
             staticEgg.style.display = 'none';
             loadingAnimation.style.display = 'block';
             resetButton.classList.remove('hidden');
 
-            controlButton.innerHTML = '<i class="fa-solid fa-stop"></i> Stop Boiling';
+            controlButton.innerHTML = '<i class="fa-solid fa-stop"></i> Stop';
             controlButton.classList.add('boiling');
             
             const now = new Date();
@@ -246,7 +225,7 @@
             
             timerInterval = setInterval(() => {
                 timeLeft--;
-                updateTimerOnAllDisplays(timeLeft);
+                updateAllTimerDisplays(timeLeft);
                 if (timeLeft <= 0) {
                     finishTimer();
                 }
@@ -260,11 +239,12 @@
             boilingSound.pause();
             boilingSound.currentTime = 0;
 
+            if (!isMuted) alarmSound.play();
+            
             loadingAnimation.style.display = 'none';
             hatchingAnimation.style.display = 'block';
             hatchingAnimation.classList.add('start-hatching');
 
-            alarmSound.play();
             doneMessage.style.display = 'block';
             startTimeInfo.textContent = 'Your perfect eggs are ready!';
             
@@ -275,19 +255,15 @@
         
         function resetTimer() {
             clearInterval(timerInterval);
-            
-            // Stop all sounds and reset their time
             boilingSound.pause();
             alarmSound.pause();
             boilingSound.currentTime = 0;
             alarmSound.currentTime = 0;
 
-            // Reset state and time
             timerState = 'ready';
             timeLeft = DURATION_IN_SECONDS;
-            updateTimerOnAllDisplays(timeLeft);
+            updateAllTimerDisplays(timeLeft);
 
-            // Reset visual elements
             staticEgg.style.display = 'block';
             loadingAnimation.style.display = 'none';
             hatchingAnimation.style.display = 'none';
@@ -296,26 +272,27 @@
             doneMessage.style.display = 'none';
             startTimeInfo.textContent = '';
             
-            // Reset buttons
-            controlButton.innerHTML = '<i class="fa-solid fa-play"></i> Start Boiling';
+            controlButton.innerHTML = '<i class="fa-solid fa-play"></i> Start';
             controlButton.classList.remove('boiling', 'alarm-active');
             resetButton.classList.add('hidden');
         }
 
-        // --- Event Listeners ---
+        // --- Main Event Listeners ---
         controlButton.addEventListener('click', () => {
             if (timerState === 'ready') {
                 startTimer();
-            } else {
-                // If it's boiling or alarming, the control button now acts as a reset
-                resetTimer();
+            } else if (timerState === 'boiling') {
+                resetTimer(); // "Stop" now behaves like a reset
+            } else if (timerState === 'alarm') {
+                resetTimer(); // "Stop Alarm" also resets
             }
         });
         
         resetButton.addEventListener('click', resetTimer);
 
         // --- Initial Page Load ---
-        resetTimer(); // Use the reset function to set the initial state
+        resetTimer();
+        updateSoundButton();
     </script>
 </body>
 </html>
