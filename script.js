@@ -13,9 +13,15 @@ const alarmSound = new Audio('alarm.mp3'); // The alarm sound
 
 // --- Functions ---
 
+// NEW startTimer FUNCTION
 function startTimer(seconds) {
     // 1. Clear any existing timers
     clearInterval(countdown);
+    
+    // --- NEW LINE TO FIX THE SOUND ---
+    // This "unlocks" the audio so the browser will let us play it later.
+    alarmSound.load();
+    // ---------------------------------
 
     // 2. Set the time and start the "boiling" animation
     timeRemaining = seconds;
