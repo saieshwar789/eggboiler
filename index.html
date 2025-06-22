@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Perfect Egg Timer</title>
+    
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Our Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>The Perfect Egg Timer</h1>
+        <p class="subtitle">For my favorite person ♡</p>
+
+        <div class="egg-container" id="egg-container">
+            <img src="egg.svg" alt="A cute illustration of an egg" class="egg-image">
+        </div>
+
+        <div class="timer-display" id="timer-display">00:00</div>
+
+        <div class="controls">
+            <button class="timer-button" data-time="240">Soft</button>
+            <button class="timer-button" data-time="360">Medium</button>
+            <button class="timer-button" data-time="600">Perfect</button>
+        </div>
+        
+        <button class="reset-button" id="reset-button">Reset</button>
+    </div>
+
+    <!-- Our JavaScript (defer makes it load after the HTML) -->
+    <script src="script.js" defer></script>
+</body>
+</html>
