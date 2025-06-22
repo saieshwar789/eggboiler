@@ -59,8 +59,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* SIGNIFICANTLY INCREASED THE GAP */
-            margin-bottom: 60px;
+            /* DOUBLED THE GAP */
+            margin-bottom: 120px;
         }
         
         .egg {
@@ -100,17 +100,10 @@
         #resetButton:hover { background-color: var(--grey-dark); color: white; transform: translateY(-3px); }
         .hidden { display: none; }
 
-        /* --- SOUND BUTTON FIX --- */
         #soundToggleButton {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            background: none;
-            border: none; /* NO BORDER */
-            color: var(--grey-dark);
-            font-size: 1.5rem; /* Made icon slightly larger */
-            cursor: pointer;
-            transition: color 0.2s ease;
+            position: absolute; top: 25px; right: 25px;
+            background: none; border: none; color: var(--grey-dark);
+            font-size: 1.5rem; cursor: pointer; transition: color 0.2s ease;
         }
         #soundToggleButton:hover { color: var(--pink-dark); }
 
